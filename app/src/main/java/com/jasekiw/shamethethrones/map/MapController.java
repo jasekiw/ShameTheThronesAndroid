@@ -51,7 +51,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
             mAddRestroomMarker.setMarker(null);
         }
         else {
-            mAddRestroomMarker.setMarker(addMarker(latLng, false, false, R.drawable.marker, 0.5f, 1f));
+            mAddRestroomMarker.setMarker(addMarker(latLng, false, false, R.drawable.marker, 0.5f, 1f, 1));
             dropPinEffect(mAddRestroomMarker);
         }
 
@@ -63,7 +63,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
         if(mCurrentLocationMarker != null)
             mCurrentLocationMarker.setPosition(latLng);
         else
-            mCurrentLocationMarker = addMarker(latLng, true, true, R.drawable.current_location_marker, 0.5f, 0.5f );
+            mCurrentLocationMarker = addMarker(latLng, true, true, R.drawable.current_location_marker, 0.5f, 0.5f, -1 );
     }
 
 
@@ -98,7 +98,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
                 Log.d("animation", "" + t);
                 if (t > .1) {
                     // Post again 15ms later.
-                    handler.postDelayed(this, 15);
+                    handler.postDelayed(this, 30);
                 } else {
                     marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(R.drawable.marker, 244, 244)));
 //                    marker.getMarker().showInfoWindow();
@@ -118,16 +118,23 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
     }
 
     public Marker addMarker(LatLng latLng, boolean zoomTo, boolean moveTo) {
-        return addMarker(latLng, zoomTo, moveTo, -1, 0, 0);
+        return addMarker(latLng, zoomTo, moveTo, -1, 0, 0, -1);
     }
 
-    public Marker addMarker(LatLng latLng, boolean zoomTo, boolean moveTo, int resourceID, float anchorX, float anchorY) {
+    public Marker addMarker(LatLng latLng, boolean zoomTo, boolean moveTo, int resourceID, float anchorX, float anchorY, int size) {
         MarkerOptions options = new MarkerOptions();
         options.position(latLng);
         if(anchorX != 0 && anchorY != 0)
             options.anchor(anchorX, anchorY);
-        if(resourceID != -1)
-            options.icon(BitmapDescriptorFactory.fromResource(resourceID));
+
+        if(resourceID != -1) {
+            if(size != -1)
+                options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(resourceID, size,size)));
+            else
+                options.icon(BitmapDescriptorFactory.fromResource(resourceID));
+
+        }
+
         Marker marker =  mMap.addMarker(options);
         if(moveTo)
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
