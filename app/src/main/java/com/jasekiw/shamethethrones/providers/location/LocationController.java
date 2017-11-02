@@ -30,7 +30,7 @@ public class LocationController {
         return mLocationHandler;
     }
 
-    public void setmLocationHandler(LocationHandler locationHandler) {
+    public void setLocationHandler(LocationHandler locationHandler) {
         mLocationHandler = locationHandler;
     }
 
@@ -133,7 +133,7 @@ public class LocationController {
         alert.show();
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             activateLocation();
         } else {

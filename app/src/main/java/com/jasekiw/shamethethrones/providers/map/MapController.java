@@ -2,10 +2,13 @@ package com.jasekiw.shamethethrones.providers.map;
 
 // main context import
 import android.content.Context;
+import android.util.Log;
 
 // google map imports
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -16,24 +19,42 @@ import com.jasekiw.shamethethrones.R;
 import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimation;
 import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
 
-public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener {
+public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Marker mCurrentLocationMarker;
     private ManagedMarker mAddRestroomMarker;
     private Context mContext;
-
+    private OnMapReadyCallback mReadyCallback;
     public MapController(ManagedMarker managedMarker) {
         mAddRestroomMarker = managedMarker;
     }
 
+    public boolean isMapReady() {
+        return mMap != null;
+    }
 
 
-    public void initialize(GoogleMap map, Context context) {
-        mMap = map;
+    public void initialize(SupportMapFragment fragment, Context context) {
         mContext = context;
+        fragment.getMapAsync(this);
+    }
+
+    public void setOnMapReady(OnMapReadyCallback callback) {
+        mReadyCallback = callback;
+    }
+
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        Log.d("map", "handle map ready");
         mMap.setOnMapClickListener(this);
         mMap.setOnCameraMoveListener(this);
+        if(mReadyCallback != null)
+            mReadyCallback.onMapReady(googleMap);
+
     }
 
 

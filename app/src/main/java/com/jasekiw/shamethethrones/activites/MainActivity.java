@@ -17,7 +17,7 @@ import com.jasekiw.shamethethrones.providers.map.MapController;
 
 import javax.inject.Inject;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback, LocationHandler {
+public class MainActivity extends FragmentActivity implements LocationHandler {
 
     private GoogleMap mMap;
 
@@ -36,41 +36,43 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mMapController.initialize(mapFragment, this);
         mLocationController.setActivity(this);
-        mLocationController.setmLocationHandler(this);
+        mLocationController.setLocationHandler(this);
         mLocationController.initializeLocation();
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        Log.d("map", "handle map ready");
-        mMapController.initialize(mMap, this);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.d("location", "permission event");
         switch (requestCode) {
             case LocationController.MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                mLocationController.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                mLocationController.onRequestPermissionsResult(grantResults);
                 return;
             }
         }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(final Location location) {
         Log.d("location", "handling location change");
-        if(mMap == null)
-            return;
+        OnMapReadyCallback callback = new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                changeLocation(location);
+            }
+        };
+        if(!mMapController.isMapReady())
+            mMapController.setOnMapReady(callback);
+        else
+            changeLocation(location);
+    }
+
+    private void changeLocation(Location location) {
         Log.d("location", "adding marker");
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         mMapController.changeCurrentLocation(latLng);
-
     }
 }
