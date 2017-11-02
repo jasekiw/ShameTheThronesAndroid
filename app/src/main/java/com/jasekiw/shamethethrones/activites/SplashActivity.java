@@ -1,10 +1,10 @@
-package com.jasekiw.shamethethrones;
+package com.jasekiw.shamethethrones.activites;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class SpashActivity extends Activity {
+public class SplashActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

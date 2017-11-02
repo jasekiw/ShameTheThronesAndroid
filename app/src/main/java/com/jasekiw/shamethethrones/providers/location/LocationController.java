@@ -1,4 +1,4 @@
-package com.jasekiw.shamethethrones.gps;
+package com.jasekiw.shamethethrones.providers.location;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,31 +12,41 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-/**
- * Created by Jason on 11/1/2017.
- */
 
 public class LocationController {
-    private Activity mContext;
+
+    private Activity mActivity;
     private LocationHandler mLocationHandler;
-    public static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 334;
     LocationManager mLocationManager;
     MainLocationListener mLocationListener;
+    public static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 334;
 
-    public LocationController(Activity context, LocationHandler locationHandler) {
-        mContext = context;
+    public LocationController() {
+
+    }
+
+
+    public LocationHandler getmLocationHandler() {
+        return mLocationHandler;
+    }
+
+    public void setmLocationHandler(LocationHandler locationHandler) {
         mLocationHandler = locationHandler;
+    }
+
+    public Activity getActivity() {
+        return mActivity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.mActivity = activity;
     }
 
 
     public void initializeLocation() {
 
 
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -44,7 +54,7 @@ public class LocationController {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mContext,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 Log.d("location", "why you turn down request?");
@@ -57,7 +67,7 @@ public class LocationController {
                 // No explanation needed, we can request the permission.
 
                 Log.d("location", "requesting permission");
-                ActivityCompat.requestPermissions(mContext,
+                ActivityCompat.requestPermissions(mActivity,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_FINE_LOCATION);
 
@@ -83,7 +93,7 @@ public class LocationController {
         // permission was granted, yay! do the
         // calendar task you need to do.
 
-        mLocationManager = (LocationManager) this.mContext.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) this.mActivity.getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MainLocationListener(mLocationHandler);
 
         if ( !mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -106,12 +116,12 @@ public class LocationController {
 
 
     private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        mContext.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        mActivity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

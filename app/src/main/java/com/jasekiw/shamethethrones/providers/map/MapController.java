@@ -1,24 +1,20 @@
-package com.jasekiw.shamethethrones.map;
+package com.jasekiw.shamethethrones.providers.map;
 
-
+// main context import
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 
+// google map imports
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+// application imports
+
 import com.jasekiw.shamethethrones.R;
+import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimation;
+import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
 
 public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener {
 
@@ -27,14 +23,15 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
     private ManagedMarker mAddRestroomMarker;
     private Context mContext;
 
-    public MapController(GoogleMap map, Context context) {
-        mMap = map;
-        mContext = context;
-        mAddRestroomMarker = new ManagedMarker();
-        initialize();
+    public MapController(ManagedMarker managedMarker) {
+        mAddRestroomMarker = managedMarker;
     }
 
-    private void initialize() {
+
+
+    public void initialize(GoogleMap map, Context context) {
+        mMap = map;
+        mContext = context;
         mMap.setOnMapClickListener(this);
         mMap.setOnCameraMoveListener(this);
     }
@@ -52,7 +49,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
         }
         else {
             mAddRestroomMarker.setMarker(addMarker(latLng, false, false, R.drawable.marker, 0.5f, 1f, 1));
-            dropPinEffect(mAddRestroomMarker);
+            new MarkerAnimation(new BitmapUtilities(mContext)).applyScaleEffect(mAddRestroomMarker, 244);
         }
 
     }
@@ -66,47 +63,6 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
             mCurrentLocationMarker = addMarker(latLng, true, true, R.drawable.current_location_marker, 0.5f, 0.5f, -1 );
     }
 
-
-
-    public Bitmap resizeMapIcons(int resourceID, int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(mContext.getResources(),resourceID);
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
-    }
-
-    private void dropPinEffect(final ManagedMarker marker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final long duration = 200;
-
-        final Interpolator interpolator = new DecelerateInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(marker.getMarker() == null)
-                    return;
-
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = Math.max(
-                        1 - interpolator.getInterpolation((float) elapsed
-                                / duration), 0);
-//                marker.setAnchor(0.5f, 1.0f + 2 * t);
-                int width = (int) (244.0 - (50.0 * t));
-                int height = (int) (244.0 - (50.0 * t));
-                marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(R.drawable.marker, width, height)));
-                Log.d("animation", "" + t);
-                if (t > .1) {
-                    // Post again 15ms later.
-                    handler.postDelayed(this, 30);
-                } else {
-                    marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(R.drawable.marker, 244, 244)));
-//                    marker.getMarker().showInfoWindow();
-
-                }
-            }
-        });
-    }
 
 
     public Marker addMarker(LatLng latLng) {
@@ -129,7 +85,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
 
         if(resourceID != -1) {
             if(size != -1)
-                options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(resourceID, size,size)));
+                options.icon(BitmapDescriptorFactory.fromBitmap(new BitmapUtilities(mContext).resize(resourceID, size,size)));
             else
                 options.icon(BitmapDescriptorFactory.fromResource(resourceID));
 

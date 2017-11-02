@@ -1,4 +1,4 @@
-package com.jasekiw.shamethethrones.map;
+package com.jasekiw.shamethethrones.providers.map;
 
 import com.google.android.gms.maps.model.Marker;
 
