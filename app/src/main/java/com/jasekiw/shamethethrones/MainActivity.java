@@ -19,11 +19,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.jasekiw.shamethethrones.gps.LocationController;
 import com.jasekiw.shamethethrones.gps.LocationHandler;
 import com.jasekiw.shamethethrones.gps.MainLocationListener;
+import com.jasekiw.shamethethrones.map.MapController;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, LocationHandler {
 
     private GoogleMap mMap;
     private LocationController mLocationController;
+    private MapController mMapController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +58,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Log.d("map", "handle map ready");
+        mMapController = new MapController(mMap);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        Log.d("location", "permission event");
         switch (requestCode) {
             case LocationController.MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
                 mLocationController.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -77,11 +82,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("location", "handling location change");
         if(mMap == null)
             return;
+        Log.d("location", "adding marker");
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
-        mMap.addMarker(new MarkerOptions().position(latLng));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mMapController.changeCurrentLocation(latLng);
+
     }
 }
