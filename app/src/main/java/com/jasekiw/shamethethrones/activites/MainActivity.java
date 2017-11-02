@@ -1,5 +1,6 @@
 package com.jasekiw.shamethethrones.activites;
 
+import android.app.Activity;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class MainActivity extends FragmentActivity implements LocationHandler {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().hide();
         ((STTApp)getApplication()).getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
