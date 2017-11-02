@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Log.d("map", "handle map ready");
-        mMapController = new MapController(mMap);
+        mMapController = new MapController(mMap, this);
     }
 
     @Override
