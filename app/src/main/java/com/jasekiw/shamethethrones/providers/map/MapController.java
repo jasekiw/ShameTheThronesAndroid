@@ -19,7 +19,7 @@ import com.jasekiw.shamethethrones.R;
 import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimation;
 import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
 
-public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener, OnMapReadyCallback {
+public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private Marker mCurrentLocationMarker;
@@ -52,6 +52,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
         Log.d("map", "handle map ready");
         mMap.setOnMapClickListener(this);
         mMap.setOnCameraMoveListener(this);
+        mMap.setOnMarkerClickListener(this);
         if(mReadyCallback != null)
             mReadyCallback.onMapReady(googleMap);
 
@@ -64,6 +65,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
     }
 
     private void createAddRestroomPopup(LatLng latLng) {
+        Log.d("map", "onMapClick");
         if(mAddRestroomMarker.isMarkerNotNull()) {
             mAddRestroomMarker.getMarker().remove();
             mAddRestroomMarker.setMarker(null);
@@ -125,5 +127,18 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
         if(mAddRestroomMarker.isMarkerNotNull())
             mAddRestroomMarker.getMarker().remove();
         mAddRestroomMarker.setMarker(null);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Log.d("map", "onMarkerClick");
+        if(marker == mAddRestroomMarker.getMarker())
+        {
+            Log.d("map", "Removing Marker");
+            if(mAddRestroomMarker.isMarkerNotNull())
+                mAddRestroomMarker.removeMarker();
+
+        }
+        return false;
     }
 }

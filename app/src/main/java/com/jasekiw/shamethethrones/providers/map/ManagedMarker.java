@@ -19,6 +19,10 @@ public class ManagedMarker {
         this.mMarker = mMarker;
     }
 
+    public void removeMarker() {
+        mMarker.remove();
+        mMarker = null;
+    }
     public boolean isMarkerNull() {
         return mMarker == null;
     }
