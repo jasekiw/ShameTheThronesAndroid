@@ -5,7 +5,11 @@ import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,7 +22,7 @@ import com.jasekiw.shamethethrones.providers.map.MapController;
 
 import javax.inject.Inject;
 
-public class MainActivity extends FragmentActivity implements LocationHandler {
+public class MainActivity extends FragmentActivity implements LocationHandler, View.OnTouchListener {
 
     private GoogleMap mMap;
 
@@ -38,6 +42,8 @@ public class MainActivity extends FragmentActivity implements LocationHandler {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        LinearLayout layout = findViewById(R.id.mainTopLayout);
+        layout.setOnTouchListener(this);
         mMapController.initialize(mapFragment, this);
         mLocationController.setActivity(this);
         mLocationController.setLocationHandler(this);
@@ -76,5 +82,25 @@ public class MainActivity extends FragmentActivity implements LocationHandler {
         double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         mMapController.changeCurrentLocation(latLng);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        Log.d("main", "touch");
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            int startX = (int) motionEvent.getX();
+            int startY = (int) motionEvent.getY();
+            LottieAnimationView animationView = findViewById(R.id.animation_view);
+            animationView.setAnimation("data.json");
+            animationView.loop(false);
+            animationView.setImageAssetsFolder("images");
+            animationView.setX(startX - animationView.getWidth() / 2);
+            animationView.setY(startY - animationView.getHeight());
+            animationView.setVisibility(View.VISIBLE);
+
+            animationView.setSpeed(2);
+            animationView.playAnimation();
+        }
+        return true;
     }
 }

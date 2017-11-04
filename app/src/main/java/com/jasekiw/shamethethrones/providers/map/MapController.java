@@ -26,6 +26,7 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
     private ManagedMarker mAddRestroomMarker;
     private Context mContext;
     private OnMapReadyCallback mReadyCallback;
+
     public MapController(ManagedMarker managedMarker) {
         mAddRestroomMarker = managedMarker;
     }
@@ -61,7 +62,8 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
 
     @Override
     public void onMapClick(LatLng latLng) {
-        createAddRestroomPopup(latLng);
+
+//        createAddRestroomPopup(latLng);
     }
 
     private void createAddRestroomPopup(LatLng latLng) {
