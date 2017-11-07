@@ -1,6 +1,5 @@
 package com.jasekiw.shamethethrones.providers.map;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,14 +13,17 @@ public class AddRestroomMarkerController {
     private int lastY = 0;
 
     private LottieAnimationView mView;
-    private LinearLayout mLayout;
 
 
+    /**
+     *
+     * @param markerView
+     * @param layout
+     */
     public void initialize(LottieAnimationView markerView, LinearLayout layout) {
         mView = markerView;
-        mLayout = layout;
-        layout.setOnTouchListener((v, event) -> trackTouchCoordinates(event));
-        markerView.setOnTouchListener((v, motionEvent) -> true);
+        layout.setOnTouchListener((view, event) -> trackTouchCoordinates(event));
+        markerView.setOnTouchListener((view, motionEvent) -> true);
     }
 
     /**

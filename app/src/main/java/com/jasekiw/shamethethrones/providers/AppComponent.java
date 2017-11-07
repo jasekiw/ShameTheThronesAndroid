@@ -4,7 +4,6 @@ import com.jasekiw.shamethethrones.activites.MainActivity;
 import com.jasekiw.shamethethrones.activites.SplashActivity;
 import com.jasekiw.shamethethrones.providers.location.LocationModule;
 import com.jasekiw.shamethethrones.providers.map.MapModule;
-import com.jasekiw.shamethethrones.providers.util.UtilModule;
 
 import javax.inject.Singleton;
 
@@ -17,8 +16,7 @@ import dagger.Component;
 @Component(modules = {
         AppModule.class,
         LocationModule.class,
-        MapModule.class,
-        UtilModule.class
+        MapModule.class
 })
 public interface AppComponent {
     void inject(MainActivity activity);

@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 // application imports
 
 import com.jasekiw.shamethethrones.R;
-import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
+import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimator;
 
 public class MapController {
 
@@ -25,12 +25,15 @@ public class MapController {
     private Context mContext;
     private OnMapReadyCallback mReadyCallback;
     private AddRestroomMarkerController mTouchController;
-
+    private MarkerAnimator mAnimator;
     public boolean isMapReady() {
         return mMap != null;
     }
 
 
+    public MapController(MarkerAnimator animator) {
+        mAnimator = animator;
+    }
     /**
      * Initialize the map controller with the given map, context, and add restroom marker controller.
      * @param mapFragment
@@ -89,7 +92,7 @@ public class MapController {
 
         if(resourceID != -1) {
             if(size != -1)
-                options.icon(BitmapDescriptorFactory.fromBitmap(new BitmapUtilities(mContext).resize(resourceID, size,size)));
+                options.icon(BitmapDescriptorFactory.fromBitmap(mAnimator.resize(resourceID, size,size)));
             else
                 options.icon(BitmapDescriptorFactory.fromResource(resourceID));
 

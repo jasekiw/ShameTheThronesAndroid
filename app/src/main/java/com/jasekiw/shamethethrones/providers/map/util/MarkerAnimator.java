@@ -1,6 +1,9 @@
 package com.jasekiw.shamethethrones.providers.map.util;
 
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.animation.DecelerateInterpolator;
@@ -10,15 +13,21 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import com.jasekiw.shamethethrones.R;
 import com.jasekiw.shamethethrones.providers.map.ManagedMarker;
-import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
 
-public class MarkerAnimation {
 
-    private BitmapUtilities mBmu;
+public class MarkerAnimator {
 
-    public MarkerAnimation(BitmapUtilities bmu) {
-        mBmu = bmu;
+    private Context mContext;
+
+    public MarkerAnimator(Context context) {
+        mContext = context;
     }
+
+    public Bitmap resize(int resourceID, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(mContext.getResources(),resourceID);
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+    }
+
 
     public void applyScaleEffect(final ManagedMarker marker, final int targetSize) {
         final Handler handler = new Handler();
@@ -41,12 +50,12 @@ public class MarkerAnimation {
 
                 int width = (int) (targetSize - (50.0 * t));
                 int height = (int) (targetSize - (50.0 * t));
-                marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(mBmu.resize(R.drawable.marker, width, height)));
+                marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(resize(R.drawable.marker, width, height)));
                 if (t > .1) {
                     // Post again 15ms later.
                     handler.postDelayed(this, 30);
                 } else {
-                    marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(mBmu.resize(R.drawable.marker, targetSize, targetSize)));
+                    marker.getMarker().setIcon(BitmapDescriptorFactory.fromBitmap(resize(R.drawable.marker, targetSize, targetSize)));
 //                    marker.getMarker().showInfoWindow();
 
                 }

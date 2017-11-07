@@ -1,7 +1,8 @@
 package com.jasekiw.shamethethrones.providers.map;
 
-import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimation;
-import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
+import android.app.Application;
+
+import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimator;
 
 import dagger.Module;
 import dagger.Provides;
@@ -10,8 +11,8 @@ import dagger.Provides;
 public class MapModule {
 
     @Provides
-    MapController provideMapController() {
-        return new MapController();
+    MapController provideMapController(Application context) {
+        return new MapController(new MarkerAnimator(context));
     }
 
 
@@ -20,13 +21,4 @@ public class MapModule {
         return new AddRestroomMarkerController();
     }
 
-    @Provides
-    MarkerAnimation provideMarkerAnimation(BitmapUtilities bmu) {
-        return new MarkerAnimation(bmu);
-    }
-
-    @Provides
-    ManagedMarker provideManagedMarker(ManagedMarker mm) {
-        return new ManagedMarker();
-    }
 }
