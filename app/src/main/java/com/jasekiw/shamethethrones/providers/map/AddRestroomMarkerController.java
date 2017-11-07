@@ -32,10 +32,11 @@ public class AddRestroomMarkerController {
      * @return
      */
     private boolean trackTouchCoordinates(MotionEvent motionEvent) {
-        Log.d("main", "touch");
+
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             lastX = (int) motionEvent.getX();
             lastY = (int) motionEvent.getY();
+            Log.d("main", "touch: " + lastX + ", " + lastY);
         }
         return false;
     }
@@ -59,8 +60,11 @@ public class AddRestroomMarkerController {
         mView.setVisibility(View.GONE);
     }
 
-
+    /**
+     * @bug The first touch is shown with the wrong x and y coords.
+     */
     public void toggle() {
+        Log.d("main", "toggle: " + lastX + ", " + lastY);
         if(mView.getVisibility() == View.VISIBLE)
             hideMarker();
         else

@@ -34,6 +34,7 @@ public class MapController {
     public MapController(MarkerAnimator animator) {
         mAnimator = animator;
     }
+
     /**
      * Initialize the map controller with the given map, context, and add restroom marker controller.
      * @param mapFragment
