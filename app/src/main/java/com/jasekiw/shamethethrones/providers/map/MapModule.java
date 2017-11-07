@@ -11,7 +11,13 @@ public class MapModule {
 
     @Provides
     MapController provideMapController() {
-        return new MapController(new ManagedMarker());
+        return new MapController();
+    }
+
+
+    @Provides
+    AddRestroomMarkerController provideAddRestroomMarkerController() {
+        return new AddRestroomMarkerController();
     }
 
     @Provides

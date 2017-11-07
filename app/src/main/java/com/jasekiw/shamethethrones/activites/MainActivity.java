@@ -1,12 +1,9 @@
 package com.jasekiw.shamethethrones.activites;
 
-import android.app.Activity;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -18,11 +15,12 @@ import com.jasekiw.shamethethrones.R;
 import com.jasekiw.shamethethrones.STTApp;
 import com.jasekiw.shamethethrones.providers.location.LocationController;
 import com.jasekiw.shamethethrones.providers.location.LocationHandler;
+import com.jasekiw.shamethethrones.providers.map.AddRestroomMarkerController;
 import com.jasekiw.shamethethrones.providers.map.MapController;
 
 import javax.inject.Inject;
 
-public class MainActivity extends FragmentActivity implements LocationHandler, View.OnTouchListener {
+public class MainActivity extends FragmentActivity implements LocationHandler {
 
     private GoogleMap mMap;
 
@@ -33,6 +31,9 @@ public class MainActivity extends FragmentActivity implements LocationHandler, V
     public MapController mMapController;
 
 
+    @Inject
+    public AddRestroomMarkerController mTouchController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +43,14 @@ public class MainActivity extends FragmentActivity implements LocationHandler, V
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        LinearLayout layout = findViewById(R.id.mainTopLayout);
-        layout.setOnTouchListener(this);
-        mMapController.initialize(mapFragment, this);
+
+
+
+        mTouchController = new AddRestroomMarkerController();
+        mTouchController.initialize(findViewById(R.id.animation_view),findViewById(R.id.mainTopLayout));
+
+
+        mMapController.initialize(mapFragment, this, mTouchController);
         mLocationController.setActivity(this);
         mLocationController.setLocationHandler(this);
         mLocationController.initializeLocation();
@@ -84,23 +90,5 @@ public class MainActivity extends FragmentActivity implements LocationHandler, V
         mMapController.changeCurrentLocation(latLng);
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("main", "touch");
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            int startX = (int) motionEvent.getX();
-            int startY = (int) motionEvent.getY();
-            LottieAnimationView animationView = findViewById(R.id.animation_view);
-            animationView.setAnimation("data.json");
-            animationView.loop(false);
-            animationView.setImageAssetsFolder("images");
-            animationView.setX(startX - animationView.getWidth() / 2);
-            animationView.setY(startY - animationView.getHeight());
-            animationView.setVisibility(View.VISIBLE);
 
-            animationView.setSpeed(2);
-            animationView.playAnimation();
-        }
-        return true;
-    }
 }

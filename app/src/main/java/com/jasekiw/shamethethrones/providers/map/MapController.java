@@ -16,29 +16,39 @@ import com.google.android.gms.maps.model.MarkerOptions;
 // application imports
 
 import com.jasekiw.shamethethrones.R;
-import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimation;
 import com.jasekiw.shamethethrones.providers.util.BitmapUtilities;
 
-public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.OnCameraMoveListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapController {
 
     private GoogleMap mMap;
     private Marker mCurrentLocationMarker;
-    private ManagedMarker mAddRestroomMarker;
     private Context mContext;
     private OnMapReadyCallback mReadyCallback;
-
-    public MapController(ManagedMarker managedMarker) {
-        mAddRestroomMarker = managedMarker;
-    }
+    private AddRestroomMarkerController mTouchController;
 
     public boolean isMapReady() {
         return mMap != null;
     }
 
 
-    public void initialize(SupportMapFragment fragment, Context context) {
+    /**
+     * Initialize the map controller with the given map, context, and add restroom marker controller.
+     * @param mapFragment
+     * @param context
+     * @param touchController
+     */
+    public void initialize(SupportMapFragment mapFragment, Context context, AddRestroomMarkerController touchController) {
         mContext = context;
-        fragment.getMapAsync(this);
+        mTouchController = touchController;
+        mapFragment.getMapAsync(googleMap -> {
+            Log.d("map", "handle map ready");
+            mMap = googleMap;
+            mMap.setOnMapClickListener(latLng -> mTouchController.toggle());
+            mMap.setOnCameraMoveListener(() -> mTouchController.hideMarker());
+
+            if(mReadyCallback != null)
+                mReadyCallback.onMapReady(googleMap);
+        });
     }
 
     public void setOnMapReady(OnMapReadyCallback callback) {
@@ -46,42 +56,11 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
     }
 
 
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        Log.d("map", "handle map ready");
-        mMap.setOnMapClickListener(this);
-        mMap.setOnCameraMoveListener(this);
-        mMap.setOnMarkerClickListener(this);
-        if(mReadyCallback != null)
-            mReadyCallback.onMapReady(googleMap);
-
-    }
-
-
-    @Override
-    public void onMapClick(LatLng latLng) {
-
-//        createAddRestroomPopup(latLng);
-    }
-
-    private void createAddRestroomPopup(LatLng latLng) {
-        Log.d("map", "onMapClick");
-        if(mAddRestroomMarker.isMarkerNotNull()) {
-            mAddRestroomMarker.getMarker().remove();
-            mAddRestroomMarker.setMarker(null);
-        }
-        else {
-            mAddRestroomMarker.setMarker(addMarker(latLng, false, false, R.drawable.marker, 0.5f, 1f, 1));
-            new MarkerAnimation(new BitmapUtilities(mContext)).applyScaleEffect(mAddRestroomMarker, 244);
-        }
-
-    }
-
-
+    /**
+     * Adjust current location marker to the latitude and longitude given
+     * @param latLng The now current location
+     */
     public void changeCurrentLocation(LatLng latLng) {
-
         if(mCurrentLocationMarker != null)
             mCurrentLocationMarker.setPosition(latLng);
         else
@@ -124,23 +103,5 @@ public class MapController implements GoogleMap.OnMapClickListener, GoogleMap.On
         return marker;
     }
 
-    @Override
-    public void onCameraMove() {
-        if(mAddRestroomMarker.isMarkerNotNull())
-            mAddRestroomMarker.getMarker().remove();
-        mAddRestroomMarker.setMarker(null);
-    }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        Log.d("map", "onMarkerClick");
-        if(marker == mAddRestroomMarker.getMarker())
-        {
-            Log.d("map", "Removing Marker");
-            if(mAddRestroomMarker.isMarkerNotNull())
-                mAddRestroomMarker.removeMarker();
-
-        }
-        return false;
-    }
 }
