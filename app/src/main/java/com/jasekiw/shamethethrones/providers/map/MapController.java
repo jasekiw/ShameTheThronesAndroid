@@ -41,15 +41,23 @@ public class MapController {
      * @param context
      * @param touchController
      */
-    public void initialize(SupportMapFragment mapFragment, Context context, AddRestroomMarkerController touchController) {
+    public void initialize(SupportMapFragment mapFragment, Context context, AddRestroomMarkerController touchController, GoogleMap.OnPoiClickListener onPoiClickListener) {
         mContext = context;
         mTouchController = touchController;
         mapFragment.getMapAsync(googleMap -> {
             Log.d("map", "handle map ready");
             mMap = googleMap;
-            mMap.setOnMapClickListener(latLng -> mTouchController.toggle());
+            mMap.setOnMapClickListener(latLng -> {
+                Log.d("map", "onMapClick");
+                mTouchController.toggle(latLng);
+            });
             mMap.setOnCameraMoveListener(() -> mTouchController.hideMarker());
-
+            mMap.setOnPoiClickListener((poi) -> {
+                Log.d("map", "Point Of Interest");
+                onPoiClickListener.onPoiClick(poi);
+            });
+            googleMap.setMaxZoomPreference(20);
+            googleMap.setMinZoomPreference(17);
             if(mReadyCallback != null)
                 mReadyCallback.onMapReady(googleMap);
         });
@@ -103,7 +111,7 @@ public class MapController {
         if(moveTo)
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         if(zoomTo)
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
         return marker;
     }
 

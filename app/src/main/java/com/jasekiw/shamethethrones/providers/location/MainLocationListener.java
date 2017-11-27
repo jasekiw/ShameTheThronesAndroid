@@ -15,7 +15,7 @@ public class MainLocationListener implements android.location.LocationListener {
     @Override
     public void onLocationChanged(Location location) {
 
-        Log.d("location", location.getLatitude() + "," + location.getLongitude());
+//        Log.d("location", location.getLatitude() + "," + location.getLongitude());
         mlocationHandler.onLocationChanged(location);
     }
 

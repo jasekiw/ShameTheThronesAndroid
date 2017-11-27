@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <!-- Map -->
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -14,6 +15,7 @@
         android:layout_height="match_parent"
         tools:context="com.jasekiw.shamethethrones.activites.MainActivity" />
 
+    <!-- Map Overlay for creating an animated marker -->
     <LinearLayout
         android:id="@+id/mainTopLayout"
         android:layout_width="match_parent"
@@ -30,5 +32,22 @@
             android:visibility="gone"/>
 
     </LinearLayout>
+
+    <!-- Fragment container for the add restroom view -->
+    <!--<LinearLayout-->
+        <!--android:id="@+id/mainAddRestroomContainer"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:focusable="false"-->
+        <!--android:focusableInTouchMode="false"-->
+        <!--android:orientation="horizontal" />-->
+
+    <FrameLayout
+        android:id="@+id/add_restroom_layout"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+       />
 
 </RelativeLayout>
