@@ -20,7 +20,7 @@ public class LocationController {
     MainLocationListener mLocationListener;
     public static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 334;
 
-    public LocationHandler getmLocationHandler() {
+    public LocationHandler getLocationHandler() {
         return mLocationHandler;
     }
 

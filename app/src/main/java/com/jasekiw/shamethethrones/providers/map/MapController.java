@@ -2,6 +2,7 @@ package com.jasekiw.shamethethrones.providers.map;
 
 // main context import
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 // google map imports
@@ -10,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -18,21 +20,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.jasekiw.shamethethrones.R;
 import com.jasekiw.shamethethrones.providers.map.util.MarkerAnimator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapController {
 
     private GoogleMap mMap;
     private Marker mCurrentLocationMarker;
     private Context mContext;
-    private OnMapReadyCallback mReadyCallback;
+    private List<OnMapReadyCallback> mapReadyCallbacks = new ArrayList<>();
     private AddRestroomMarkerController mTouchController;
     private MarkerAnimator mAnimator;
+
+    private MapRestroomMarkersController mMapRestroomMarkersController;
+
     public boolean isMapReady() {
         return mMap != null;
     }
 
 
-    public MapController(MarkerAnimator animator) {
+    public MapController(MarkerAnimator animator, MapRestroomMarkersController mapRestroomMarkersController) {
         mAnimator = animator;
+        mMapRestroomMarkersController = mapRestroomMarkersController;
     }
 
     /**
@@ -41,10 +50,13 @@ public class MapController {
      * @param context
      * @param touchController
      */
-    public void initialize(SupportMapFragment mapFragment, Context context, AddRestroomMarkerController touchController, GoogleMap.OnPoiClickListener onPoiClickListener) {
+    public void initialize(SupportMapFragment mapFragment, Context context,
+                           AddRestroomMarkerController touchController, GoogleMap.OnPoiClickListener onPoiClickListener,
+                           MapRestroomMarkersController.OnRestroomClickListener clickListener) {
         mContext = context;
         mTouchController = touchController;
         mapFragment.getMapAsync(googleMap -> {
+            mMapRestroomMarkersController.intialize(googleMap, context, clickListener);
             Log.d("map", "handle map ready");
             mMap = googleMap;
             mMap.setOnMapClickListener(latLng -> {
@@ -52,22 +64,19 @@ public class MapController {
                 mTouchController.toggle(latLng);
             });
             mMap.setOnCameraMoveListener(() -> mTouchController.hideMarker());
-            mMap.setOnPoiClickListener((poi) -> {
-                Log.d("map", "Point Of Interest");
-                onPoiClickListener.onPoiClick(poi);
-            });
+            mMap.setOnCameraIdleListener( () -> mMapRestroomMarkersController.refreshRestrooms());
+            mMap.setOnPoiClickListener(onPoiClickListener);
             googleMap.setMaxZoomPreference(20);
-            googleMap.setMinZoomPreference(17);
-            if(mReadyCallback != null)
-                mReadyCallback.onMapReady(googleMap);
+            googleMap.setMinZoomPreference(15);
+            for (OnMapReadyCallback callback : mapReadyCallbacks)
+                callback.onMapReady(googleMap);
+            mMapRestroomMarkersController.refreshRestrooms();
         });
     }
 
-    public void setOnMapReady(OnMapReadyCallback callback) {
-        mReadyCallback = callback;
-    }
+    public void addOnMapReady(OnMapReadyCallback callback) { mapReadyCallbacks.add(callback); }
 
-
+    public void removeOnMapReady(OnMapReadyCallback callback) { mapReadyCallbacks.remove(callback); }
     /**
      * Adjust current location marker to the latitude and longitude given
      * @param latLng The now current location
@@ -108,12 +117,36 @@ public class MapController {
         }
 
         Marker marker =  mMap.addMarker(options);
+
         if(moveTo)
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         if(zoomTo)
             mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
         return marker;
     }
+
+    public CameraPosition getCurrentCameraPosition() {
+        return mMap.getCameraPosition();
+    }
+    public void setCurrentCameraPosition(CameraPosition newPosition) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition.target, newPosition.zoom));
+    }
+
+
+    public void restore(Bundle savedInstanceState) {
+        CameraPosition position = savedInstanceState.getParcelable("map_camera_position");
+        if(position != null) {
+            if(isMapReady())
+                setCurrentCameraPosition(position);
+            else
+               addOnMapReady(map -> setCurrentCameraPosition(position));
+        }
+    }
+    public Bundle save(Bundle outState) {
+        outState.putParcelable("map_camera_position", getCurrentCameraPosition());
+        return outState;
+    }
+
 
 
 }

@@ -12,7 +12,7 @@ import com.google.maps.model.PlacesSearchResult;
 
 import java.io.IOException;
 
-public class WebSearchTask extends AsyncTask<LatLng, Void,PlacesSearchResult[]> {
+public class WebSearchTask extends AsyncTask<PlacesWebApiSearch.SearchParams, Void,PlacesSearchResult[]> {
 
     private OnPlacesSearchResult mOnPlacesSearchResult;
     private GeoApiContext mGeoApiContext;
@@ -23,10 +23,11 @@ public class WebSearchTask extends AsyncTask<LatLng, Void,PlacesSearchResult[]> 
     }
 
     @Override
-    protected PlacesSearchResult[] doInBackground(LatLng... latLngs) {
-        com.google.maps.model.LatLng newLatLng = new com.google.maps.model.LatLng(latLngs[0].latitude, latLngs[0].longitude);
+    protected PlacesSearchResult[] doInBackground(PlacesWebApiSearch.SearchParams... params) {
+        PlacesWebApiSearch.SearchParams searchParams = params[0];
+        com.google.maps.model.LatLng newLatLng = new com.google.maps.model.LatLng(searchParams.latLng.latitude, searchParams.latLng.longitude);
         try {
-            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(mGeoApiContext, newLatLng).radius(50).await();
+            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(mGeoApiContext, newLatLng).radius(searchParams.radius).await();
             return response.results;
         } catch (ApiException e) {
             e.printStackTrace();

@@ -45,7 +45,7 @@
         <!--android:orientation="horizontal" />-->
 
     <FrameLayout
-        android:id="@+id/add_restroom_layout"
+        android:id="@+id/restroom_container"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
        />

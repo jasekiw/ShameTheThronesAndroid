@@ -44,6 +44,8 @@ dependencies {
 
     compile 'com.android.volley:volley:1.0.0'
 
+    compile 'com.jcminarro:RoundKornerLayouts:0.3.1'
+
     compile 'com.google.maps:google-maps-services:0.2.5'
     testCompile 'junit:junit:4.12'
 }

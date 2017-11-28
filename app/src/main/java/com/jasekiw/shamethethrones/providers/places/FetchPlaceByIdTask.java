@@ -1,6 +1,7 @@
 package com.jasekiw.shamethethrones.providers.places;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
@@ -23,6 +24,8 @@ public class FetchPlaceByIdTask extends AsyncTask<String,Void, Place> {
 
     @Override
     protected Place doInBackground(String... placeIds) {
+        Log.d("Place", placeIds[0]);
+
         PlaceBuffer result = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeIds[0]).await();
         if(result.getStatus().isSuccess()) {
             Place place = result.get(0).freeze();

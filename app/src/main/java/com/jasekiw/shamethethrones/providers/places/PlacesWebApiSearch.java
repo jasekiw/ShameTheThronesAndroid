@@ -4,6 +4,7 @@ package com.jasekiw.shamethethrones.providers.places;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -23,6 +24,17 @@ public class PlacesWebApiSearch {
     Context mContext;
 
     GeoApiContext mGeoApiContext;
+    public static class SearchParams {
+
+        public LatLng latLng;
+        public int radius;
+
+        public SearchParams(LatLng latLng, int radius) {
+            this.latLng = latLng;
+            this.radius = radius;
+        }
+
+    }
 
     public PlacesWebApiSearch(Context context) {
         mContext = context;
@@ -32,7 +44,7 @@ public class PlacesWebApiSearch {
                 .build();
     }
 
-    public void getPlaceIdFromLatLng(Context context, LatLng latLng, OnChosenResult onResult) {
+    public void getPlaceIdFromLatLng(Context context, SearchParams searchParams, OnChosenResult onResult) {
         Log.d("places", "request");
         Log.d("places", "Thread: " + android.os.Process.myTid());
         WebSearchTask task = new WebSearchTask(inputResults -> {
@@ -51,7 +63,7 @@ public class PlacesWebApiSearch {
                 onResult.onSearchResult(results[i]);
             });
         }, mGeoApiContext);
-        task.execute(latLng);
+        task.execute(searchParams);
     }
 
     protected PlacesSearchResult[] filterResults(PlacesSearchResult[] inputResults) {
@@ -67,15 +79,16 @@ public class PlacesWebApiSearch {
     }
 
     protected void buildAlertDialog(String[] results, Context context,  DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setIcon(R.mipmap.ic_launcher);
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context, R.style.DialogTheme);
         builderSingle.setTitle("Which Place do you want to add a restroom for?");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_item);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, R.layout.list_item_text_view);
         for (String result : results)
             arrayAdapter.add(result);
         builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
         builderSingle.setAdapter(arrayAdapter, listener);
-        builderSingle.show();
+        AlertDialog dialog = builderSingle.create();
+        dialog.setOnShowListener( dialogInterface -> dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE));
+        dialog.show();
     }
 
 }
