@@ -44,6 +44,10 @@ public class MapController {
         mMapRestroomMarkersController = mapRestroomMarkersController;
     }
 
+    public void reloadRestrooms() {
+        mMapRestroomMarkersController.refreshRestrooms();
+    }
+
     /**
      * Initialize the map controller with the given map, context, and add restroom marker controller.
      * @param mapFragment

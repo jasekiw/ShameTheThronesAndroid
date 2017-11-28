@@ -84,7 +84,7 @@ public class PlacesWebApiSearch {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, R.layout.list_item_text_view);
         for (String result : results)
             arrayAdapter.add(result);
-        builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+        builderSingle.setNegativeButton("close", (dialog, which) -> dialog.dismiss());
         builderSingle.setAdapter(arrayAdapter, listener);
         AlertDialog dialog = builderSingle.create();
         dialog.setOnShowListener( dialogInterface -> dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE));

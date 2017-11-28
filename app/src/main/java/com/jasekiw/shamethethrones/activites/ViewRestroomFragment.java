@@ -92,6 +92,12 @@ public class ViewRestroomFragment extends Fragment{
             mRestroomFragmentController.setOnRestroomCancelledListener((RestroomFragmentController.OnRestroomCancelledListener) context);
          else
             throw new RuntimeException(context.toString() + " must implement OnAddRestroomCancelledListener");
+
+
+        if (context instanceof RestroomFragmentController.OnRestroomChangeListener)
+            mRestroomFragmentController.setOnRestroomChangeListener((RestroomFragmentController.OnRestroomChangeListener) context);
+        else
+            throw new RuntimeException(context.toString() + " must implement OnAddRestroomCancelledListener");
         mRestroomFragmentController.setLayoutInflater(context.getLayoutInflater());
 
     }

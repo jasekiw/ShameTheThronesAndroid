@@ -27,7 +27,9 @@ import com.jasekiw.shamethethrones.providers.restroom.RestroomFragmentController
 
 public class MainActivity extends FragmentActivity implements LocationHandler,
         AddRestroomFragmentController.OnAddRestroomCancelledListener,
-        RestroomFragmentController.OnRestroomCancelledListener{
+        RestroomFragmentController.OnRestroomCancelledListener,
+        AddRestroomFragmentController.OnRestroomAddedListener,
+        RestroomFragmentController.OnRestroomChangeListener{
 
     private static final String NEW_RESTROOM_TAG = "NEW_RESTROOM_FRAGMENT";
     private static final String VIEW_RESTROOM_TAG = "VIEW_RESTROOM_FRAGMENT";
@@ -172,6 +174,10 @@ public class MainActivity extends FragmentActivity implements LocationHandler,
      */
     @Override
     public void onAddRestroomCancelled() {
+        removeAddRestroomFragment();
+    }
+
+    private void removeAddRestroomFragment() {
         // device was rotated so we need to grab the new restroom fragment if it exists. This will return null if the fragment wasn't loaded
         AddRestroomFragment addRestroomFragment = (AddRestroomFragment) getFragmentManager().findFragmentByTag(NEW_RESTROOM_TAG);
         FragmentManager fm = getFragmentManager();
@@ -183,11 +189,28 @@ public class MainActivity extends FragmentActivity implements LocationHandler,
 
     @Override
     public void onRestroomCancelled() {
+        removeViewRestroomFragment();
+    }
+
+    protected void removeViewRestroomFragment() {
         ViewRestroomFragment viewRestroomFragment = (ViewRestroomFragment) getFragmentManager().findFragmentByTag(VIEW_RESTROOM_TAG);
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction()
                 .setCustomAnimations(R.animator.slide_in_top, R.animator.slide_out_top)
                 .remove(viewRestroomFragment)
                 .commit();
+    }
+
+    @Override
+    public void onRestroomAdded(RestroomModel restroom) {
+        removeAddRestroomFragment();
+        mMapController.reloadRestrooms();
+        showViewRestroomFragment(restroom);
+    }
+
+    @Override
+    public void onRestroomChange() {
+        removeViewRestroomFragment();
+        mMapController.reloadRestrooms();
     }
 }

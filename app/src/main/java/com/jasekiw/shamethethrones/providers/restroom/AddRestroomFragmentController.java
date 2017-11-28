@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.jasekiw.shamethethrones.models.restroom.AddRestroomModel;
+import com.jasekiw.shamethethrones.models.restroom.RestroomModel;
 import com.jasekiw.shamethethrones.providers.api.RestroomApi;
 
 
@@ -20,7 +21,12 @@ public class AddRestroomFragmentController {
         void onAddRestroomCancelled();
     }
 
+    public static interface OnRestroomAddedListener {
+        void onRestroomAdded(RestroomModel restroomModel);
+    }
+
     private OnAddRestroomCancelledListener mOnAddRestroomCancelledListener;
+    private OnRestroomAddedListener mOnRestroomAddedListener;
     private TextView mTvTitle;
     private ImageView mIvPhoto;
     private AddRestroomModel mModel;
@@ -44,6 +50,10 @@ public class AddRestroomFragmentController {
 
     public void setOnAddRestroomCancelledListener(OnAddRestroomCancelledListener listener) {
         mOnAddRestroomCancelledListener = listener;
+    }
+
+    public void setOnAddRestroomAddedListener(OnRestroomAddedListener listener) {
+        mOnRestroomAddedListener = listener;
     }
     public void removeOnAddRestroomCancelledListener() {
         mOnAddRestroomCancelledListener = null;
@@ -98,7 +108,8 @@ public class AddRestroomFragmentController {
 
     public void addRestroom(View v) {
        mRestroomApi.addRestroom(mModel, model -> {
-           cancel();
+        if(mOnRestroomAddedListener != null)
+            mOnRestroomAddedListener.onRestroomAdded(model);
        }, error -> showErrorDialog(v.getContext(), error));
     }
 

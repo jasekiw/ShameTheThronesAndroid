@@ -26,14 +26,21 @@ public class RestroomFragmentController {
     public static interface OnRestroomCancelledListener {
         void onRestroomCancelled();
     }
+
+
+    public static interface OnRestroomChangeListener {
+        void onRestroomChange();
+    }
     private RatingsFragmentController mRatingsFragmentController;
-    private OnRestroomCancelledListener mOnAddRestroomCancelledListener;
+    private OnRestroomCancelledListener mOnRestroomCancelledListener;
+    private OnRestroomChangeListener mOnRestroomChangeListener;
     private TextView mTvTitle;
     private ImageView mIvPhoto;
     private RestroomModel mModel;
     private RatingApi mRatingApi;
     private TextView mTvRatingValue;
     private TextView mTvGenderValue;
+    private boolean changed = false;
 
 
     public RestroomFragmentController(RatingApi api, RatingsFragmentController ratingsFragmentController) {
@@ -46,16 +53,30 @@ public class RestroomFragmentController {
         mModel = model;
     }
 
-    public void cancel() {
-        if(mOnAddRestroomCancelledListener != null)
-            mOnAddRestroomCancelledListener.onRestroomCancelled();
+    public void close() {
+        if(changed)
+        {
+            if(mOnRestroomChangeListener != null)
+                mOnRestroomChangeListener.onRestroomChange();
+        }
+        else
+        {
+            if(mOnRestroomCancelledListener != null)
+                mOnRestroomCancelledListener.onRestroomCancelled();
+        }
+
     }
 
     public void setOnRestroomCancelledListener(OnRestroomCancelledListener listener) {
-        mOnAddRestroomCancelledListener = listener;
+        mOnRestroomCancelledListener = listener;
     }
+
+    public void setOnRestroomChangeListener(OnRestroomChangeListener listener) {
+        mOnRestroomChangeListener = listener;
+    }
+
     public void removeOnAddRestroomCancelledListener() {
-        mOnAddRestroomCancelledListener = null;
+        mOnRestroomCancelledListener = null;
     }
 
     public void updateView() {
@@ -85,7 +106,7 @@ public class RestroomFragmentController {
         mIvPhoto = ivPhoto;
         mTvRatingValue = tvRatingValue;
         mTvGenderValue = tvGenderValue;
-        bvCancel.setOnClickListener( v -> cancel());
+        bvCancel.setOnClickListener( v -> close());
         bvNavigate.setOnClickListener(v -> {
             Uri gmmIntentUri = Uri.parse("google.navigation:q=" + mModel.getLatLng().latitude + "," + mModel.getLatLng().longitude);
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
@@ -137,6 +158,7 @@ public class RestroomFragmentController {
     }
 
     public void onNewRating(NewRatingResponseModel newRatingResponseModel) {
+        changed = true;
         mModel.setRating(newRatingResponseModel.getNewAverage());
         mRatingsFragmentController.addRating(newRatingResponseModel.getRating());
         updateView();
