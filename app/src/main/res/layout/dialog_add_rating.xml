@@ -12,7 +12,7 @@
         android:id="@+id/dialog_add_rating_sb_rating"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#FFF"
         android:max="5"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,11 +41,11 @@
         android:id="@+id/dialog_add_rating_et_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:textColor="#FFF"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#FFF"
+        android:ems="10"
         android:inputType="textMultiLine"
+        android:textColor="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dialog_add_rating_tv_comment" />
@@ -69,5 +69,15 @@
         android:text="Cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dialog_add_rating_et_comment" />
+
+    <TextView
+        android:id="@+id/dialog_add_rating_tv_seekbar_number"
+        style="@style/SmallTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_add_rating_sb_rating"
+        tools:layout_editor_absoluteX="147dp" />
 
 </android.support.constraint.ConstraintLayout>

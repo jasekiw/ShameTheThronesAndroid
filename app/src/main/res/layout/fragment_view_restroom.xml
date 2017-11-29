@@ -13,7 +13,8 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         app:corner_radius="16dp"
-        android:background="#839392">
+        android:elevation="2dp"
+        android:background="@color/background">
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">

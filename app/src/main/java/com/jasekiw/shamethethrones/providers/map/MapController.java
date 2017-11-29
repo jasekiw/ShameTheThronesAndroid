@@ -71,7 +71,7 @@ public class MapController {
             mMap.setOnCameraIdleListener( () -> mMapRestroomMarkersController.refreshRestrooms());
             mMap.setOnPoiClickListener(onPoiClickListener);
             googleMap.setMaxZoomPreference(20);
-            googleMap.setMinZoomPreference(15);
+            googleMap.setMinZoomPreference(12);
             for (OnMapReadyCallback callback : mapReadyCallbacks)
                 callback.onMapReady(googleMap);
             mMapRestroomMarkersController.refreshRestrooms();

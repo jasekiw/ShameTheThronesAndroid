@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -127,14 +129,36 @@ public class RestroomFragmentController {
     }
 
     protected void showRatingDialog(Context context) {
-        final Dialog dialog = new Dialog(context,R.style.DialogTheme);
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_add_rating);
         dialog.setTitle("Add a rating");
 
         // set the custom dialog components - text, image and button
         EditText etComment = dialog.findViewById(R.id.dialog_add_rating_et_comment);
         SeekBar ratingSeekBar = dialog.findViewById(R.id.dialog_add_rating_sb_rating);
+        TextView tvSeekBarNumber = dialog.findViewById(R.id.dialog_add_rating_tv_seekbar_number);
 
+
+        ratingSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                int val = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset())) / seekBar.getMax();
+                tvSeekBarNumber.setText(String.valueOf(progress));
+                tvSeekBarNumber.setX(seekBar.getX() + val + seekBar.getThumbOffset() / 2);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                tvSeekBarNumber.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                tvSeekBarNumber.setVisibility(View.GONE);
+            }
+        });
 
         Button dialogButton = dialog.findViewById(R.id.dialog_add_rating_bv_add_rating);
         Button cancelButton = dialog.findViewById(R.id.dialog_add_rating_bv_cancel);
