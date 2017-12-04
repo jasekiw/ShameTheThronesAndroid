@@ -61,7 +61,7 @@ public class MapRestroomMarkersController {
             removeRestroomMarkers();
             for (RestroomModel restroom : restrooms)
                 addRestroomMarker(restroom);
-        }, error -> DialogUtility.showErrorDialog(mContext, "Could not retrieve restrooms"));
+        }, error -> {});
     }
 
     private void addRestroomMarker(RestroomModel model) {
